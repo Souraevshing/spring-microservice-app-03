@@ -12,7 +12,7 @@ public interface JobService {
 
     ResponseEntity<Job> createJob(Job job);
 
-    ResponseEntity<Job> getJobById(Long companyId);
+    ResponseEntity<JobDto> findJobById(Long companyId);
 
     ResponseEntity<String> deleteJobById(Long companyId);
 

@@ -1,6 +1,7 @@
 package com.demo.job_microservice.job.service.impl;
 
 import com.demo.job_microservice.job.dto.JobDto;
+import com.demo.job_microservice.job.mapper.JobToCompanyDto;
 import com.demo.job_microservice.job.model.Company;
 import com.demo.job_microservice.job.service.JobService;
 import com.demo.job_microservice.job.model.Job;
@@ -17,16 +18,15 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class JobServiceImpl implements JobService {
 
     private JobRepository jobRepository;
+    private JobToCompanyDto jobToCompanyDto;
     private static final Logger LOGGER = LoggerFactory.getLogger(JobServiceImpl.class);
-
-    @Autowired
-    WebClient.Builder webClientBuilder;
 
     @Override
     public ResponseEntity<List<JobDto>> findAllJobs() {
@@ -36,32 +36,31 @@ public class JobServiceImpl implements JobService {
             LOGGER.info("Fetched all jobs");
 
             List<Job> jobs = jobRepository.findAll();
-            List<JobDto> jobDtos = new ArrayList<>();
-            for (Job job : jobs) {
-                JobDto jobDto1 = new JobDto();
-                jobDto1.setJob(job);
-
-                if (job.getCompanyId() != null) {
-                    Company company = webClientBuilder
-                            .build()
-                            .get()
-                            .uri("http://COMPANY-MICROSERVICE:8082/api/v1/companies/"
-                                    + job.getCompanyId())
-                            .retrieve()
-                            .bodyToMono(Company.class)
-                            .block();
-
-                    jobDto1.setCompany(company);
-                } else {
-                    LOGGER.warn("Company id is null");
-                }
-
-                jobDtos.add(jobDto1);
-            }
+            List<JobDto> jobDtos = jobs
+                    .stream()
+                    .map(job -> jobToCompanyDto.convertToDto(job))
+                    .collect(Collectors.toList());
 
             return new ResponseEntity<>(jobDtos, HttpStatus.OK);
         } catch(Exception exception) {
             LOGGER.error("Failed to fetch all jobs {}", exception.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<JobDto> findJobById(Long companyId) {
+        LOGGER.info("Fetching job with id : {}", companyId);
+
+        try {
+            Job job = jobRepository.findById(companyId).orElseThrow();
+            LOGGER.info("Job fetched successfully with id {}", companyId);
+            JobDto jobDto = jobToCompanyDto.convertToDto(job);
+            jobDto.setJob(job);
+
+            return new ResponseEntity<>(jobDto, HttpStatus.OK);
+        } catch(Exception exception) {
+            LOGGER.error("Failed to fetch job {}", exception.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -81,35 +80,11 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public ResponseEntity<Job> getJobById(Long companyId) {
-        LOGGER.info("Fetching job with id : {}", companyId);
-
-        try {
-            Optional<Job> job = jobRepository
-                    .findById(companyId)
-                    .stream()
-                    .filter(j -> j.getId().equals(companyId))
-                    .findFirst();
-
-            return job.map(j -> {
-                LOGGER.info("Job found with id: {}", companyId);
-                return new ResponseEntity<>(j, HttpStatus.OK);
-            }).orElseGet(() -> {
-                LOGGER.warn("Job not found with id: {}", companyId);
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            });
-        } catch(Exception exception) {
-            LOGGER.error("Failed to fetch job {}", exception.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @Override
     public ResponseEntity<String> deleteJobById(Long companyId) {
         LOGGER.info("Deleting job with id: {}", companyId);
 
         try {
-            boolean isJobExists = getJobById(companyId).hasBody();
+            boolean isJobExists = findJobById(companyId).hasBody();
             if (isJobExists) {
                 jobRepository.deleteById(companyId);
                 LOGGER.info("Job deleted with id: {}", companyId);
