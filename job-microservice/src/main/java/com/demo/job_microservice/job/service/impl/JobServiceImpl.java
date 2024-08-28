@@ -2,20 +2,16 @@ package com.demo.job_microservice.job.service.impl;
 
 import com.demo.job_microservice.job.dto.JobDto;
 import com.demo.job_microservice.job.mapper.JobToCompanyDto;
-import com.demo.job_microservice.job.model.Company;
 import com.demo.job_microservice.job.service.JobService;
 import com.demo.job_microservice.job.model.Job;
 import com.demo.job_microservice.job.repository.JobRepository;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -56,7 +52,6 @@ public class JobServiceImpl implements JobService {
             Job job = jobRepository.findById(companyId).orElseThrow();
             LOGGER.info("Job fetched successfully with id {}", companyId);
             JobDto jobDto = jobToCompanyDto.convertToDto(job);
-            jobDto.setJob(job);
 
             return new ResponseEntity<>(jobDto, HttpStatus.OK);
         } catch(Exception exception) {
