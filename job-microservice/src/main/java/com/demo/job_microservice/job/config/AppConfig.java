@@ -6,6 +6,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
+/**
+ * this configuration is for using RestTemplate and WebClient
+ * but, we are using FeignClient for inter-communication
+ */
 @Configuration
 public class AppConfig {
 

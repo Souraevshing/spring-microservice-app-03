@@ -1,7 +1,7 @@
 package com.demo.job_microservice.job.service.impl;
 
 import com.demo.job_microservice.job.dto.JobDto;
-import com.demo.job_microservice.job.mapper.JobToCompanyDto;
+import com.demo.job_microservice.job.dto.JobToCompanyDto;
 import com.demo.job_microservice.job.service.JobService;
 import com.demo.job_microservice.job.model.Job;
 import com.demo.job_microservice.job.repository.JobRepository;

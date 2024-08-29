@@ -8,6 +8,11 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
+/**
+ * The programmer uses a class to convert JPA to DTO for Job and can be reused in other parts of the code.
+ * All setters are called to set values for Company, Job, and Review service at the same time to avoid repetitive code.
+ *
+ */
 @Configuration
 public class JobMapper {
 

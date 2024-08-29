@@ -27,19 +27,19 @@ public class CompanyController {
         return companyService.findAllJobs();
     }
 
-    @GetMapping("{id}")
-    public ResponseEntity<Company> findById(@PathVariable Long id) {
-        return companyService.findById(id);
+    @GetMapping("{companyId}")
+    public ResponseEntity<Company> findById(@PathVariable Long companyId) {
+        return companyService.findById(companyId);
     }
 
-    @PutMapping("{id}")
-    public ResponseEntity<Company> updateCompany(@PathVariable Long id, @RequestBody Company company) {
-        return companyService.updateCompany(id, company);
+    @PutMapping("{companyId}")
+    public ResponseEntity<Company> updateCompany(@PathVariable Long companyId, @RequestBody Company company) {
+        return companyService.updateCompany(companyId, company);
     }
 
-    @DeleteMapping("{id}")
-    public ResponseEntity<String> deleteCompany(@PathVariable Long id) {
-        return companyService.deleteCompany(id);
+    @DeleteMapping("{companyId}")
+    public ResponseEntity<String> deleteCompany(@PathVariable Long companyId) {
+        return companyService.deleteCompany(companyId);
     }
 
 }

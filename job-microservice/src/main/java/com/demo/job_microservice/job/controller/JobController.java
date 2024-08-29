@@ -23,9 +23,9 @@ public class JobController {
         return jobService.findAllJobs();
     }
 
-    @GetMapping("{id}")
-    public ResponseEntity<JobDto> findJobById(@PathVariable Long id) {
-        return jobService.findJobById(id);
+    @GetMapping("{jobId}")
+    public ResponseEntity<JobDto> findJobById(@PathVariable Long jobId) {
+        return jobService.findJobById(jobId);
     }
 
     @PostMapping()
@@ -33,14 +33,14 @@ public class JobController {
         return jobService.createJob(job);
     }
 
-    @DeleteMapping("{id}")
-    public ResponseEntity<String> deleteJobById(@PathVariable Long id) {
-        return jobService.deleteJobById(id);
+    @DeleteMapping("{jobId}")
+    public ResponseEntity<String> deleteJobById(@PathVariable Long jobId) {
+        return jobService.deleteJobById(jobId);
     }
 
-    @PutMapping("{id}")
-    public ResponseEntity<Job> updateJob(@PathVariable Long id, @RequestBody Job job) {
-        return jobService.updateJob(id, job);
+    @PutMapping("{jobId}")
+    public ResponseEntity<Job> updateJob(@PathVariable Long jobId, @RequestBody Job job) {
+        return jobService.updateJob(jobId, job);
     }
 
 }
